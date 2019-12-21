@@ -1,0 +1,142 @@
+----------------cut command planning------------------
+
+--> [ options ]
+    --> [ -c ] -> character positions(s)
+    --> [ -b ] -> byte position(s)
+    --> [ -f ] -> field position(s)
+    --> [ -d ] -> delimiter
+
+--> [ features ]
+    --> single file 
+    --> multiple file
+    --> standard input
+
+----------------------file----------------------
+--> tmp1.txt
+
+    abcdefghi   jklmnopqr   stuvwxyz
+    abcdefghi   jklmnopqr   stuvwxyz
+    abcdefghi   jklmnopqr   stuvwxyz
+
+--> tmp2.txt
+
+    abc,def,ghi,jkl,mno,pqr,stu,vwx,yz
+    abc,def,ghi,jkl,mno,pqr,stu,vwx,yz
+    abc,def,ghi,jkl,mno,pqr,stu,vwx,yz
+
+
+
+
+------------------list of usages------------------
+
+-> node cut.js -f 2 tmp1.txt5
+-> node cut.js -f 1,2 tmp1.txt
+-> node cut.js -f 1-2 tmp1.txt
+-> node cut.js -f 2
+
+-> node cut.js -f 2 -d ',' tmp2.txt
+-> node cut.js -f 1,2 -d ',' tmp2.txt
+-> node cut.js -f 2-4 -d ',' tmp2.txt
+-> node cut.js -f 2 -d ','
+
+
+[A] -> field based split
+--------------------------
+
+  [a] -> default delimiter(-d not specified)
+  ------------------------------------------
+
+    [1] ->  field based split without specifying delimiter with single field
+    
+            node cut.js -f 2 tmp1.txt
+
+            ==> [ cut.js ] ==>
+
+            jklmnopqr
+            jklmnopqr
+            jklmnopqr
+
+  
+    [2] ->  field based split without specifying delimiter with list of fields
+    
+            node cut.js -f 1,2 tmp1.txt
+
+            ==> [ cut.js ] ==>
+
+            abcdefghi   jklmnopqr
+            abcdefghi   jklmnopqr
+            abcdefghi   jklmnopqr
+
+
+    [3] ->  field based split without specifying delimiter with range of fields
+    
+            node cut.js -f 1-2 tmp1.txt
+
+            ==> [ cut.js ] ==>
+
+            abcdefghi   jklmnopqr
+            abcdefghi   jklmnopqr
+            abcdefghi   jklmnopqr
+
+    [4] -> field based split for standard input
+
+            node cut.js -f 2
+                abcdefghi   jklmnopqr
+                abcdefghi   jklmnopqr
+                abcdefghi   jklmnopqr
+
+            ==> [ cut.js ] ==>
+
+            jklmnopqr
+            jklmnopqr
+            jklmnopqr
+
+[a] -> specific delimiter
+--------------------------
+
+    [1] ->  field based split with specific delimiter with single field
+    
+            node cut.js -f 2 -d ',' tmp2.txt
+
+            ==> [ cut.js ] ==>
+
+            def
+            def
+            def
+
+  
+    [2] ->  field based split with specific delimiter with list of fields
+    
+            node cut.js -f 1,2 -d ',' tmp2.txt
+
+            ==> [ cut.js ] ==>
+
+            abc,def
+            abc,def
+            abc,def
+
+
+    [3] ->  field based split with specific delimiter with range of fields
+    
+            node cut.js -f 2-4 -d ',' tmp2.txt
+
+            ==> [ cut.js ] ==>
+
+            def,ghi,jkl
+            def,ghi,jkl
+            def,ghi,jkl
+
+
+    [4] ->  field based split with specific delimiter with standard input
+    
+            node cut.js -f 2 -d ',' tmp2.txt
+                abc,def,ghi
+                abc,def,ghi
+                abc,def,ghi
+
+            ==> [ cut.js ] ==>
+
+            def
+            def
+            def
+
