@@ -1,0 +1,30 @@
+{
+  "name": "jstools-anil-muraleedharan",
+  "version": "0.1.1",
+  "description": "",
+  "main": "cut.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "dependencies": {
+    "chai": "^4.2.0"
+  },
+  "devDependencies": {
+    "mocha": "^6.2.2",
+    "nyc": "^14.1.1"
+  },
+  "scripts": {
+    "test": "nyc mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/step-batch-7/jsTools-anil-muraleedharan.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/step-batch-7/jsTools-anil-muraleedharan/issues"
+  },
+  "homepage": "https://github.com/step-batch-7/jsTools-anil-muraleedharan#readme"
+}

@@ -1,33 +1,22 @@
-v0.1
-    -> node cut.js -f 2 tmp1.txt5
-    -> node cut.js -f 2 
+======= todo =======
+[v0.1] node cut.js -f 2 tmp1.txt
 
---Implementation
-
-  -> create folders :- src , test 
-  -> create files :- cut.js, lib.js, testLib.js 
-  -> make connections :-
-       to main file and lib.js
-       to test file and src file
-  -> make sure that mocha runs
-  -> make sure nyc runs 
-  -> make sure npm package file is proper
-  -> make sure git ignore should be proper
-  -> proper app tests needed 
+done  -> create folders :- src , test, appTest 
+done  -> create files :- cut.js, lib.js, testLib.js 
+done  -> make connections :-
+        to main file and lib.js
+        to test file and src file
+done  -> make sure that mocha runs
+done  -> make sure nyc runs 
+done  -> make sure npm package file is proper
+done  -> make sure git ignore should be proper
+done  -> npm test
     
-    -----required tasks------
+-----required tasks------
 
--> node cut.js -f 2 tmp1.txt5
+-> node cut.js -f 2 tmp1.txt
     -> getUserOptions
     -> readFileContents
     -> getFieldsList
     -> getRequiredFields
     -> generateMessage    
-
- -> node cut.js -f 2 
-    -> getUserOptions
-    -> readFileContents
-    -> getFieldsList
-    -> getRequiredFields
-    -> generateMessage  
-    -> readStandardInput
