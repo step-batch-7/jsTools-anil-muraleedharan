@@ -18,5 +18,5 @@ done  -> npm test
 done  -> parseUserOptions
 done  -> readFileContents
 done  -> getFieldsList
-    -> getRequiredFields
-    -> generateMessage    
+done  -> getRequiredFields
+done  -> generateMessage    

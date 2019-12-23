@@ -24,9 +24,15 @@ const getRequiredFields = function(fileContents, fields, delimiter) {
   return fileContents.map(separateFields.bind(null, fields, delimiter));
 };
 
+const generateMessage = function(requiredFields, delimiter) {
+  const lines = requiredFields.map(fields => fields.join(delimiter));
+  return lines.join('\n');
+};
+
 module.exports = {
   parseUserOptions,
   readFileContents,
   getFieldsList,
-  getRequiredFields
+  getRequiredFields,
+  generateMessage
 };

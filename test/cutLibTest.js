@@ -1,9 +1,10 @@
-const { deepStrictEqual } = require('chai').assert;
+const { strictEqual, deepStrictEqual } = require('chai').assert;
 const {
   parseUserOptions,
   readFileContents,
   getFieldsList,
-  getRequiredFields
+  getRequiredFields,
+  generateMessage
 } = require('../src/cutLib');
 
 describe('parseUserOptions', function() {
@@ -42,5 +43,11 @@ describe('getRequiredFields', function() {
       ['ab'],
       ['ef']
     ]);
+  });
+});
+
+describe('generateMessage', function() {
+  it('should generate a proper message to print depends on the field contents and delimiter', function() {
+    strictEqual(generateMessage([['ab'], ['ef']], ','), 'ab\nef');
   });
 });
