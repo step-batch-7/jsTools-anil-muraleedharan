@@ -24,7 +24,7 @@ describe('readFileContents', function() {
     return 'line1\nline2\nline3';
   };
   it('should read the contents of the file if it is exist and the file existence should be truthy', function() {
-    deepStrictEqual(readFileContents(fileReader, 'path'), {
+    deepStrictEqual(readFileContents(fileReader,'utf8', 'path'), {
       fileExistence: true,
       contents: ['line1', 'line2', 'line3']
     });
