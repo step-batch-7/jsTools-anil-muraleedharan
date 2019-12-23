@@ -2,3 +2,4 @@ node cut.js -d ',' -f 2 ./appTests/tmp1.txt
 def
 mno
 vwx
+xyz

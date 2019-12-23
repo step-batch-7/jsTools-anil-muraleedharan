@@ -20,6 +20,7 @@ const getFieldContent = function(fieldSeparatedContents, field) {
 
 const separateFields = function(fields, delimiter, line) {
   const fieldSeparatedContents = line.split(delimiter);
+  if (fieldSeparatedContents.length === 1) return fieldSeparatedContents;
   return fields.map(getFieldContent.bind(null, fieldSeparatedContents));
 };
 

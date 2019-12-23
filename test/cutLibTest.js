@@ -24,7 +24,7 @@ describe('readFileContents', function() {
     return 'line1\nline2\nline3';
   };
   it('should read the contents of the file if it is exist and the file existence should be truthy', function() {
-    deepStrictEqual(readFileContents(fileReader,'utf8', 'path'), {
+    deepStrictEqual(readFileContents(fileReader, 'utf8', 'path'), {
       fileExistence: true,
       contents: ['line1', 'line2', 'line3']
     });
@@ -42,6 +42,14 @@ describe('getRequiredFields', function() {
     deepStrictEqual(getRequiredFields(['ab,cd', 'ef,gh'], [1], ','), [
       ['ab'],
       ['ef']
+    ]);
+  });
+
+  it('should give the whole line if the line contains only one field', function() {
+    deepStrictEqual(getRequiredFields(['ab,cd', 'ef,gh', 'ij'], [2], ','), [
+      ['cd'],
+      ['gh'],
+      ['ij']
     ]);
   });
 });
