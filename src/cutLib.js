@@ -1,4 +1,4 @@
-const parseUserInputs = function(cmdLineArgs) {
+const parseUserOptions = function(cmdLineArgs) {
   const requiredArgs = cmdLineArgs.slice(2);
   const argsLength = requiredArgs.length;
   const userOptions = {};
@@ -13,4 +13,4 @@ const parseUserInputs = function(cmdLineArgs) {
   return userOptions;
 };
 
-module.exports = { parseUserInputs };
+module.exports = { parseUserOptions };
