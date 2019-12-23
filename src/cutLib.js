@@ -1,9 +1,6 @@
 const parseUserOptions = function(cmdLineArgs) {
-  const parsedOptions = {};
-  parsedOptions.delimiter = cmdLineArgs[3];
-  parsedOptions.fields = cmdLineArgs[5];
-  parsedOptions.path = cmdLineArgs[6];
-  return parsedOptions;
+  [, , , delimiter, , fields, path] = cmdLineArgs;
+  return { delimiter, fields, path };
 };
 
 const readFileContents = function(fileReader, path) {

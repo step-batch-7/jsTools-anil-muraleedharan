@@ -15,8 +15,8 @@ done  -> npm test
 -----required tasks------
 
 -> node cut.js -f 2 tmp1.txt
-    -> parseUserOptions
-    -> readFileContents
-    -> getFieldsList
+done  -> parseUserOptions
+done  -> readFileContents
+done  -> getFieldsList
     -> getRequiredFields
     -> generateMessage    
