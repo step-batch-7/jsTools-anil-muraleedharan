@@ -8,8 +8,25 @@ const readFileContents = function(fileReader, path) {
 };
 
 const getFieldsList = function(fields) {
-  let fieldsList = fields.split(',');
-  return fieldsList.map(field => +field);
+  return [+fields];
 };
 
-module.exports = { parseUserOptions, readFileContents, getFieldsList };
+const getFieldContent = function(fieldSeparatedContents, field) {
+  return fieldSeparatedContents[field - 1];
+};
+
+const separateFields = function(fields, delimiter, line) {
+  const fieldSeparatedContents = line.split(delimiter);
+  return fields.map(getFieldContent.bind(null, fieldSeparatedContents));
+};
+
+const getRequiredFields = function(fileContents, fields, delimiter) {
+  return fileContents.map(separateFields.bind(null, fields, delimiter));
+};
+
+module.exports = {
+  parseUserOptions,
+  readFileContents,
+  getFieldsList,
+  getRequiredFields
+};

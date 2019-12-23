@@ -2,7 +2,8 @@ const { deepStrictEqual } = require('chai').assert;
 const {
   parseUserOptions,
   readFileContents,
-  getFieldsList
+  getFieldsList,
+  getRequiredFields
 } = require('../src/cutLib');
 
 describe('parseUserOptions', function() {
@@ -31,6 +32,15 @@ describe('readFileContents', function() {
 
 describe('getFieldsList', function() {
   it('should give an array of all the required fields if we give an array of fields range', function() {
-    deepStrictEqual(getFieldsList('2,3,4'), [2, 3, 4]);
+    deepStrictEqual(getFieldsList('2'), [2]);
+  });
+});
+
+describe('getRequiredFields', function() {
+  it('should give an array of all the required fields in each line', function() {
+    deepStrictEqual(getRequiredFields(['ab,cd', 'ef,gh'], [1], ','), [
+      ['ab'],
+      ['ef']
+    ]);
   });
 });
