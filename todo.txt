@@ -25,5 +25,5 @@ done  -> main
 
 ---->bugs<-----
 
-  -> in any line doesn't contain the required field it should give the whole line
+  -> if any line contain only one field the whole line should be given for any field required
   -> error flow didn't considered
