@@ -1,5 +1,5 @@
 ======= todo =======
-[v0.1] node cut.js -f 2 tmp1.txt
+[v0.1] node cut.js -d ',' -f 2 tmp1.txt
 
 done  -> create folders :- src , test, appTest 
 done  -> create files :- cut.js, lib.js, testLib.js 
