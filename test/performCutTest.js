@@ -9,7 +9,7 @@ describe('performCut', function() {
 
   it('should do the operation and return back a proper message if the file exist', function() {
     const userInputs = ['node', 'cut.js', '-d', ',', '-f', '2', 'path'];
-    const expected = { message: 'def\nmno\nvwx\nxyz' };
+    const expected = { message: 'def\nmno\nvwx\nxyz', error: '' };
     deepStrictEqual(
       performCut(userInputs, { fileReader, existenceChecker, encoding }),
       expected
@@ -18,7 +18,10 @@ describe('performCut', function() {
 
   it('should give back an error message if the file does not exist', function() {
     const userInputs = ['node', 'cut.js', '-d', ',', '-f', '2', 'badFile.txt'];
-    const expected = { error: 'badFile.txt: No such file or directory' };
+    const expected = {
+      message: '',
+      error: 'badFile.txt: No such file or directory'
+    };
     deepStrictEqual(
       performCut(userInputs, { fileReader, existenceChecker, encoding }),
       expected

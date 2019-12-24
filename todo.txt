@@ -28,4 +28,6 @@ done  -> main
 done  -> if any line contain only one field the whole line should be given for any field required
 done  -> error flow didn't considered
   -> in -f field instead of number if given a character error should popup
+        expected : cut: [-cf] list: illegal list value
   -> in -f field if given zero error should popup
+        expected : cut: [-cf] list: values may not include zero

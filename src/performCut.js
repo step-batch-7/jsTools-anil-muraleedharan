@@ -15,12 +15,12 @@ const performCut = function(
     fileReader,
     existenceChecker,
     encoding,
-    path
+    path: path
   });
-  if (error) return { error };
+  if (error) return { error, message: '' };
   const fieldsList = getFieldsList(fields);
   const requiredFields = getRequiredFields(contents, fieldsList, delimiter);
-  return { message: generateMessage(requiredFields, delimiter) };
+  return { message: generateMessage(requiredFields, delimiter), error: '' };
 };
 
 exports.performCut = performCut;

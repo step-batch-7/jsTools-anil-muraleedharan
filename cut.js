@@ -8,8 +8,8 @@ const main = function(cmdLineArgs) {
     encoding: 'utf8'
   };
   const { message, error } = performCut(cmdLineArgs, helpers);
-  message && process.stdout.write(message);
-  error && process.stderr.write(error);
+  process.stdout.write(message);
+  process.stderr.write(error);
 };
 
 main(process.argv);
