@@ -20,14 +20,37 @@ describe('parseUserOptions', function() {
 });
 
 describe('readFileContents', function() {
-  const fileReader = path => {
-    return 'line1\nline2\nline3';
-  };
+  const fileReader = path => 'line1\nline2\nline3';
+  const existenceChecker = path => path === 'path';
+  const encoding = 'utf8';
+
   it('should read the contents of the file if it is exist and the file existence should be truthy', function() {
-    deepStrictEqual(readFileContents(fileReader, 'utf8', 'path'), {
-      fileExistence: true,
-      contents: ['line1', 'line2', 'line3']
-    });
+    deepStrictEqual(
+      readFileContents({
+        fileReader,
+        existenceChecker,
+        encoding,
+        path: 'path'
+      }),
+      {
+        fileExistence: true,
+        contents: ['line1', 'line2', 'line3']
+      }
+    );
+  });
+
+  it('should give the the existence as a falsy value when the file does not exist', function() {
+    deepStrictEqual(
+      readFileContents({
+        fileReader,
+        existenceChecker,
+        encoding,
+        path: 'other path'
+      }),
+      {
+        fileExistence: false
+      }
+    );
   });
 });
 

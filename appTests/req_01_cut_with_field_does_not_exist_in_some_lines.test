@@ -1,0 +1,5 @@
+node cut.js -d ',' -f 4 ./appTests/tmp1.txt
+iii
+
+zzz
+xyz

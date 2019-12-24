@@ -1,6 +1,8 @@
 const { performCut } = require('./src/performCut');
 const main = function(cmdLineArgs) {
-  process.stdout.write(performCut(cmdLineArgs));
+  const { message, error } = performCut(cmdLineArgs);
+  message && process.stdout.write(message);
+  error && process.stderr.write(error);
 };
 
 main(process.argv);

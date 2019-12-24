@@ -3,10 +3,20 @@ const parseUserOptions = function(cmdLineArgs) {
   return { delimiter, fields, path };
 };
 
-const readFileContents = function(fileReader, encoding, path) {
+const readFileContents = function({
+  fileReader,
+  existenceChecker,
+  encoding,
+  path
+}) {
+  if (existenceChecker(path)) {
+    return {
+      fileExistence: true,
+      contents: fileReader(path, encoding).split('\n')
+    };
+  }
   return {
-    fileExistence: true,
-    contents: fileReader(path, encoding).split('\n')
+    fileExistence: false
   };
 };
 

@@ -1,4 +1,4 @@
-const { readFileSync } = require('fs');
+const { readFileSync, existsSync } = require('fs');
 const {
   parseUserOptions,
   readFileContents,
@@ -9,10 +9,18 @@ const {
 
 const performCut = function(cmdLineArgs) {
   const { path, fields, delimiter } = parseUserOptions(cmdLineArgs);
-  const { contents } = readFileContents(readFileSync, 'utf8', path);
-  const fieldsList = getFieldsList(fields);
-  const requiredFields = getRequiredFields(contents, fieldsList, delimiter);
-  return generateMessage(requiredFields, delimiter);
+  const { fileExistence, contents } = readFileContents({
+    fileReader: readFileSync,
+    existenceChecker: existsSync,
+    encoding: 'utf8',
+    path: path
+  });
+  if (fileExistence) {
+    const fieldsList = getFieldsList(fields);
+    const requiredFields = getRequiredFields(contents, fieldsList, delimiter);
+    return { message: generateMessage(requiredFields, delimiter) };
+  }
+  return { error: 'No such file or directory' };
 };
 
 exports.performCut = performCut;
