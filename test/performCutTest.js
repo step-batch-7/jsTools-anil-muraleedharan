@@ -18,7 +18,7 @@ describe('performCut', function() {
 
   it('should give back an error message if the file does not exist', function() {
     const userInputs = ['node', 'cut.js', '-d', ',', '-f', '2', 'badFile.txt'];
-    const expected = { error: 'No such file or directory' };
+    const expected = { error: 'badFile.txt: No such file or directory' };
     deepStrictEqual(performCut(userInputs), expected);
   });
 });

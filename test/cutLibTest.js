@@ -33,7 +33,6 @@ describe('readFileContents', function() {
         path: 'path'
       }),
       {
-        fileExistence: true,
         contents: ['line1', 'line2', 'line3']
       }
     );
@@ -48,7 +47,7 @@ describe('readFileContents', function() {
         path: 'other path'
       }),
       {
-        fileExistence: false
+        error: 'other path: No such file or directory'
       }
     );
   });

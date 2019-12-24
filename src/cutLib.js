@@ -11,12 +11,11 @@ const readFileContents = function({
 }) {
   if (existenceChecker(path)) {
     return {
-      fileExistence: true,
       contents: fileReader(path, encoding).split('\n')
     };
   }
   return {
-    fileExistence: false
+    error: `${path}: No such file or directory`
   };
 };
 
