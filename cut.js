@@ -7,7 +7,7 @@ const main = function(cmdLineArgs) {
     existenceChecker: existsSync,
     encoding: 'utf8'
   };
-  const { message, error } = performCut(cmdLineArgs, helper);
+  const { message, error } = performCut(cmdLineArgs, helpers);
   message && process.stdout.write(message);
   error && process.stderr.write(error);
 };
