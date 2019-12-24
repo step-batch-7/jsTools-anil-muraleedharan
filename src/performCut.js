@@ -1,4 +1,3 @@
-const { readFileSync, existsSync } = require('fs');
 const {
   parseUserOptions,
   readFileContents,
@@ -7,13 +6,16 @@ const {
   generateMessage
 } = require('./cutLib');
 
-const performCut = function(cmdLineArgs) {
+const performCut = function(
+  cmdLineArgs,
+  { fileReader, existenceChecker, encoding }
+) {
   const { path, fields, delimiter } = parseUserOptions(cmdLineArgs);
   const { contents, error } = readFileContents({
-    fileReader: readFileSync,
-    existenceChecker: existsSync,
-    encoding: 'utf8',
-    path: path
+    fileReader,
+    existenceChecker,
+    encoding,
+    path
   });
   if (error) return { error };
   const fieldsList = getFieldsList(fields);
