@@ -16,6 +16,15 @@ describe('performCut', function() {
     );
   });
 
+  it('should do the operation if -d and -f options are in reverse order', function() {
+    const userInputs = ['node', 'cut.js', '-f', '2', '-d', ',', 'path'];
+    const expected = { message: 'def\nmno\nvwx\nxyz', error: '' };
+    deepStrictEqual(
+      performCut(userInputs, { fileReader, existenceChecker, encoding }),
+      expected
+    );
+  });
+
   it('should give back an error message if the file does not exist', function() {
     const userInputs = ['node', 'cut.js', '-d', ',', '-f', '2', 'badFile.txt'];
     const expected = {

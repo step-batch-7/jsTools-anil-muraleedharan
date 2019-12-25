@@ -1,5 +1,19 @@
+const getDelimiter = function(userArgs) {
+  return userArgs[userArgs.indexOf('-d') + 1];
+};
+
+const getFieldNo = function(userArgs) {
+  return userArgs[userArgs.indexOf('-f') + 1];
+};
+
+const getPath = function(userArgs) {
+  return userArgs[userArgs.length - 1];
+};
+
 const parseUserOptions = function(cmdLineArgs) {
-  [, , , delimiter, , fields, path] = cmdLineArgs;
+  const delimiter = getDelimiter(cmdLineArgs);
+  const fields = getFieldNo(cmdLineArgs);
+  const path = getPath(cmdLineArgs);
   return { delimiter, fields, path };
 };
 
