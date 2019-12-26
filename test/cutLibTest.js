@@ -37,7 +37,7 @@ describe('readLines', function() {
       ),
       {
         lines: ['line1', 'line2', 'line3'],
-        readError: ''
+        error: ''
       }
     );
   });
@@ -54,7 +54,7 @@ describe('readLines', function() {
       ),
       {
         lines: [],
-        readError: 'other path: No such file or directory'
+        error: 'other path: No such file or directory'
       }
     );
   });

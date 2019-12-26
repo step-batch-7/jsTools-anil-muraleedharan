@@ -7,10 +7,16 @@ const parseUserOptions = function(cmdLineArgs) {
 
 const readLines = function({ readFileSync, existsSync }, path) {
   const lines = [];
-  const readError = '';
+  const error = '';
   if (existsSync(path))
-    return { lines: readFileSync(path, 'utf8').split('\n'), readError };
-  return { lines, readError: `${path}: No such file or directory` };
+    return { lines: readFileSync(path, 'utf8').split('\n'), error };
+  return { lines, error: `${path}: No such file or directory` };
+};
+
+const cutRequiredField = function(delimiter, fieldNo, line) {
+  let splittedLine = line.split(delimiter);
+  if (splittedLine.length === 1) return splittedLine[0];
+  return splittedLine[fieldNo - 1];
 };
 
 const getFields = function({ lines, fieldNo, delimiter }) {
@@ -20,21 +26,16 @@ const getFields = function({ lines, fieldNo, delimiter }) {
   };
   if (isNaN(fieldNo)) return { fieldError: errors.fieldIsNaN, fields: [] };
   if (fieldNo === 0) return { fieldError: errors.fieldIsZero, fields: [] };
-  const fields = lines.map(line => {
-    let splittedLine = line.split(delimiter);
-    if (splittedLine.length === 1) return splittedLine[0];
-    return splittedLine[fieldNo - 1];
-  });
+  const fields = lines.map(cutRequiredField.bind(null, delimiter, fieldNo));
   return { fields, fieldError: '' };
 };
 
 const cut = function(cmdLineArgs, fileSystem) {
   const { path, fieldNo, delimiter } = parseUserOptions(cmdLineArgs);
-  const { lines, readError } = readLines(fileSystem, path);
-  if (readError) return { error: readError, message: '' };
+  const { lines, error } = readLines(fileSystem, path);
+  if (error) return { error, message: '' };
   const { fields, fieldError } = getFields({ lines, fieldNo, delimiter });
-  if (fieldError) return { error: fieldError, message: '' };
-  return { message: fields.join('\n'), error: '' };
+  return { message: fields.join('\n'), error: fieldError };
 };
 
 module.exports = {
