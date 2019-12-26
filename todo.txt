@@ -33,10 +33,20 @@
 ✅ -> in -f field if given zero error should popup
         expected : cut: [-cf] list: values may not include zero
 
+----->changes needed<-----
 
+✅ -> fields - rows
+✅ -> getFields - cutFields
+❇️ -> don't export function just for test
 
 [v0.1.1] node cut.js -d ',' -f 2 tmp1.txt or node cut.js -f 2 -d ',' tmp1.txt
 
+----->Environment<------
+
+❇️ -> To make a new file for pseudo main
+❇️ -> To make a new test file for pseudo main
+
 ----->Required Changes<-----
 
+❇️ -> To change the pseudo main testing from integrated to unit level
 ❇️ -> To change parseUserOptions more flexible as order independent

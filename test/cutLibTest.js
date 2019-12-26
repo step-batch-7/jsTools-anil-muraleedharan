@@ -5,7 +5,7 @@ const {
   parseUserOptions,
   readLines,
   cut,
-  getFields
+  cutFields
 } = require('../src/cutLib');
 
 describe('parseUserOptions', function() {
@@ -13,7 +13,7 @@ describe('parseUserOptions', function() {
     const userOption = ['-d', ',', '-f', '2', './tmp1.txt'];
     const expected = {
       path: './tmp1.txt',
-      fieldNo: 2,
+      fieldNum: 2,
       delimiter: ','
     };
     deepStrictEqual(parseUserOptions(userOption), expected);
@@ -60,12 +60,12 @@ describe('readLines', function() {
   });
 });
 
-describe('getFields', function() {
+describe('cutFields', function() {
   it('should give an array of all the  fields in each line', function() {
     deepStrictEqual(
-      getFields({ lines: ['ab,cd', 'ef,gh'], fieldNo: 1, delimiter: ',' }),
+      cutFields({ lines: ['ab,cd', 'ef,gh'], fieldNum: 1, delimiter: ',' }),
       {
-        fields: ['ab', 'ef'],
+        rows: ['ab', 'ef'],
         fieldError: ''
       }
     );
@@ -73,13 +73,13 @@ describe('getFields', function() {
 
   it('should give the whole line if the line contains only one field', function() {
     deepStrictEqual(
-      getFields({
+      cutFields({
         lines: ['ab,cd', 'ef,gh', 'ij'],
-        fieldNo: 2,
+        fieldNum: 2,
         delimiter: ','
       }),
       {
-        fields: ['cd', 'gh', 'ij'],
+        rows: ['cd', 'gh', 'ij'],
         fieldError: ''
       }
     );
@@ -87,13 +87,13 @@ describe('getFields', function() {
 
   it('should give corresponding error if the given field zero', function() {
     deepStrictEqual(
-      getFields({
+      cutFields({
         lines: ['ab,cd', 'ef,gh', 'ij'],
-        fieldNo: 0,
+        fieldNum: 0,
         delimiter: ','
       }),
       {
-        fields: [],
+        rows: [],
         fieldError: 'cut: [-cf] list: values may not include zero'
       }
     );
@@ -101,13 +101,13 @@ describe('getFields', function() {
 
   it('should give corresponding error if the given field is NaN', function() {
     deepStrictEqual(
-      getFields({
+      cutFields({
         lines: ['ab,cd', 'ef,gh', 'ij'],
-        fieldNo: 'a',
+        fieldNum: 'a',
         delimiter: ','
       }),
       {
-        fields: [],
+        rows: [],
         fieldError: 'cut: [-cf] list: illegal list value'
       }
     );

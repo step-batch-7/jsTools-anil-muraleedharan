@@ -1,8 +1,8 @@
 'use strict';
 
 const parseUserOptions = function(cmdLineArgs) {
-  const [, delimiter, , fieldNo, path] = cmdLineArgs;
-  return { delimiter, fieldNo: +fieldNo, path };
+  const [, delimiter, , fieldNum, path] = cmdLineArgs;
+  return { delimiter, fieldNum: +fieldNum, path };
 };
 
 const readLines = function({ readFileSync, existsSync }, path) {
@@ -13,39 +13,34 @@ const readLines = function({ readFileSync, existsSync }, path) {
   return { lines, error: `${path}: No such file or directory` };
 };
 
-const cutRequiredField = function(delimiter, fieldNo, line) {
+const cutRequiredField = function(delimiter, fieldNum, line) {
   let splittedLine = line.split(delimiter);
   if (splittedLine.length === 1) return splittedLine[0];
-  return splittedLine[fieldNo - 1];
+  return splittedLine[fieldNum - 1];
 };
 
-const getFields = function({ lines, fieldNo, delimiter }) {
+const cutFields = function({ lines, fieldNum, delimiter }) {
   const errors = {
     fieldIsNaN: 'cut: [-cf] list: illegal list value',
     fieldIsZero: 'cut: [-cf] list: values may not include zero'
   };
-  if (isNaN(fieldNo)) return { fieldError: errors.fieldIsNaN, fields: [] };
-  if (fieldNo === 0) return { fieldError: errors.fieldIsZero, fields: [] };
-  const fields = lines.map(cutRequiredField.bind(null, delimiter, fieldNo));
-  return { fields, fieldError: '' };
+  if (isNaN(fieldNum)) return { fieldError: errors.fieldIsNaN, rows: [] };
+  if (fieldNum === 0) return { fieldError: errors.fieldIsZero, rows: [] };
+  const rows = lines.map(cutRequiredField.bind(null, delimiter, fieldNum));
+  return { rows, fieldError: '' };
 };
 
 const cut = function(cmdLineArgs, fileSystem) {
-  const { path, fieldNo, delimiter } = parseUserOptions(cmdLineArgs);
+  const { path, fieldNum, delimiter } = parseUserOptions(cmdLineArgs);
   const { lines, error } = readLines(fileSystem, path);
   if (error) return { error, message: '' };
-  const { fields, fieldError } = getFields({ lines, fieldNo, delimiter });
-  return { message: fields.join('\n'), error: fieldError };
+  const { rows, fieldError } = cutFields({ lines, fieldNum, delimiter });
+  return { message: rows.join('\n'), error: fieldError };
 };
 
 module.exports = {
   parseUserOptions,
   readLines,
-  getFields,
+  cutFields,
   cut
 };
-
-//fields - rows
-//getfields - cutting
-//dont export just for test
-//
