@@ -1,3 +1,5 @@
+'use strict';
+
 const { deepStrictEqual } = require('chai').assert;
 const {
   parseUserOptions,
@@ -8,7 +10,7 @@ const {
 
 describe('parseUserOptions', function() {
   it('should give an object of required user Options', function() {
-    const userOption = ['node', 'cut.js', '-d', ',', '-f', '2', './tmp1.txt'];
+    const userOption = ['-d', ',', '-f', '2', './tmp1.txt'];
     const expected = {
       path: './tmp1.txt',
       fieldNo: 2,
@@ -19,22 +21,23 @@ describe('parseUserOptions', function() {
 });
 
 describe('readLines', function() {
-  const fileReader = path => 'line1\nline2\nline3';
-  const existenceChecker = path => path === 'path';
+  const readFileSync = path => 'line1\nline2\nline3';
+  const existsSync = path => path === 'path';
   const encoding = 'utf8';
 
   it('should read the lines of the file if it is exist and the file existence should be truthy', function() {
     deepStrictEqual(
       readLines(
         {
-          fileReader,
-          existenceChecker,
+          readFileSync,
+          existsSync,
           encoding
         },
         'path'
       ),
       {
-        lines: ['line1', 'line2', 'line3']
+        lines: ['line1', 'line2', 'line3'],
+        readError: ''
       }
     );
   });
@@ -43,13 +46,14 @@ describe('readLines', function() {
     deepStrictEqual(
       readLines(
         {
-          fileReader,
-          existenceChecker,
+          readFileSync,
+          existsSync,
           encoding
         },
         'other path'
       ),
       {
+        lines: [],
         readError: 'other path: No such file or directory'
       }
     );
@@ -111,52 +115,52 @@ describe('getFields', function() {
 });
 
 describe('cut', function() {
-  const fileReader = path =>
+  const readFileSync = path =>
     'abc,def,ghi,iii\njkl,mno,pqr\nstu,vwx,yz,zzz\nxyz';
-  const existenceChecker = path => path === 'path';
+  const existsSync = path => path === 'path';
   const encoding = 'utf8';
 
   it('should do the operation and return back a proper message if the file exist', function() {
-    const userInputs = ['node', 'cut.js', '-d', ',', '-f', '2', 'path'];
+    const userInputs = ['-d', ',', '-f', '2', 'path'];
     const expected = { message: 'def\nmno\nvwx\nxyz', error: '' };
     deepStrictEqual(
-      cut(userInputs, { fileReader, existenceChecker, encoding }),
+      cut(userInputs, { readFileSync, existsSync, encoding }),
       expected
     );
   });
 
   it('should give an error if the given field is zero', function() {
-    const options = ['node', 'cut.js', '-d', ',', '-f', '0', 'path'];
+    const options = ['-d', ',', '-f', '0', 'path'];
     const expected = {
       message: '',
       error: 'cut: [-cf] list: values may not include zero'
     };
     deepStrictEqual(
-      cut(options, { fileReader, existenceChecker, encoding }),
+      cut(options, { readFileSync, existsSync, encoding }),
       expected
     );
   });
 
   it('should give an error if the given field is NaN', function() {
-    const options = ['node', 'cut.js', '-f', 'a', '-d', ',', 'path'];
+    const options = ['-d', ',', '-f', 'a', 'path'];
     const expected = {
       message: '',
       error: 'cut: [-cf] list: illegal list value'
     };
     deepStrictEqual(
-      cut(options, { fileReader, existenceChecker, encoding }),
+      cut(options, { readFileSync, existsSync, encoding }),
       expected
     );
   });
 
   it('should give back an error message if the file does not exist', function() {
-    const userInputs = ['node', 'cut.js', '-d', ',', '-f', '2', 'badFile.txt'];
+    const userInputs = ['-d', ',', '-f', '2', 'badFile.txt'];
     const expected = {
       message: '',
       error: 'badFile.txt: No such file or directory'
     };
     deepStrictEqual(
-      cut(userInputs, { fileReader, existenceChecker, encoding }),
+      cut(userInputs, { readFileSync, existsSync, encoding }),
       expected
     );
   });

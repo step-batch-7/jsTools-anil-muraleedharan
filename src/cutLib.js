@@ -1,16 +1,20 @@
+'use strict';
+
 const parseUserOptions = function(cmdLineArgs) {
-  const [, , , delimiter, , fieldNo, path] = cmdLineArgs;
+  const [, delimiter, , fieldNo, path] = cmdLineArgs;
   return { delimiter, fieldNo: +fieldNo, path };
 };
 
-const readLines = function({ fileReader, existenceChecker, encoding }, path) {
-  if (existenceChecker(path))
-    return { lines: fileReader(path, encoding).split('\n') };
-  return { readError: `${path}: No such file or directory` };
+const readLines = function({ readFileSync, existsSync }, path) {
+  const lines = [];
+  const readError = '';
+  if (existsSync(path))
+    return { lines: readFileSync(path, 'utf8').split('\n'), readError };
+  return { lines, readError: `${path}: No such file or directory` };
 };
 
 const getFields = function({ lines, fieldNo, delimiter }) {
-  errors = {
+  const errors = {
     fieldIsNaN: 'cut: [-cf] list: illegal list value',
     fieldIsZero: 'cut: [-cf] list: values may not include zero'
   };
