@@ -44,3 +44,8 @@ module.exports = {
   getFields,
   cut
 };
+
+//fields - rows
+//getfields - cutting
+//dont export just for test
+//

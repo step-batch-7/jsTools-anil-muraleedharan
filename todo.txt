@@ -1,6 +1,8 @@
-=======>todo<=======
+=======>Todo<=======
 
 [v0.1] node cut.js -d ',' -f 2 tmp1.txt
+
+----->Environment<-----
 
 ✅ -> create folders :- src , test, appTest 
 ✅ -> create files :- cut.js, lib.js, testLib.js 
@@ -13,16 +15,16 @@
 ✅ -> make sure git ignore should be proper
 ✅ -> npm test
     
------>required tasks<------
+----->Required Tasks<------
 
--> node cut.js -f 2 tmp1.txt
+-> node cut.js -d ',' -f 2 tmp1.txt
 ✅ -> parseUserOptions
 ✅ -> readFileContents
 ✅ -> getFieldsList
 ✅ -> getRequiredFields 
 ✅ -> main  
 
----->bugs<-----
+---->Bugs<-----
 
 ✅ -> if any line contain only one field the whole line should be given for any field required
 ✅ -> error flow didn't considered
@@ -30,3 +32,11 @@
         expected : cut: [-cf] list: illegal list value
 ✅ -> in -f field if given zero error should popup
         expected : cut: [-cf] list: values may not include zero
+
+
+
+[v0.1.1] node cut.js -d ',' -f 2 tmp1.txt or node cut.js -f 2 -d ',' tmp1.txt
+
+----->Required Changes<-----
+
+❇️ -> To change parseUserOptions more flexible as order independent
