@@ -1,7 +1,7 @@
 'use strict';
 
 const { readFileSync, existsSync } = require('fs');
-const { cut } = require('./src/cutLib');
+const { cut } = require('./src/executeCut');
 
 const main = function(cmdLineArgs) {
   const { message, error } = cut(cmdLineArgs, { readFileSync, existsSync });
