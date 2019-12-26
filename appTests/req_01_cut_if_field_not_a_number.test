@@ -1,0 +1,2 @@
+node cut.js -d ',' -f a ./appTests/tmp1.txt
+cut: [-cf] list: illegal list value

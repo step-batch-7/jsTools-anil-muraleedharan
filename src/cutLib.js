@@ -1,65 +1,41 @@
-const getDelimiter = function(userArgs) {
-  return userArgs[userArgs.indexOf('-d') + 1];
-};
-
-const getFieldNo = function(userArgs) {
-  return userArgs[userArgs.indexOf('-f') + 1];
-};
-
-const getPath = function(userArgs) {
-  return userArgs[userArgs.length - 1];
-};
-
 const parseUserOptions = function(cmdLineArgs) {
-  const delimiter = getDelimiter(cmdLineArgs);
-  const fields = getFieldNo(cmdLineArgs);
-  const path = getPath(cmdLineArgs);
-  return { delimiter, fields, path };
+  const [, , , delimiter, , fieldNo, path] = cmdLineArgs;
+  return { delimiter, fieldNo: +fieldNo, path };
 };
 
-const readFileContents = function({
-  fileReader,
-  existenceChecker,
-  encoding,
-  path
-}) {
-  if (existenceChecker(path)) {
-    return {
-      contents: fileReader(path, encoding).split('\n')
-    };
-  }
-  return {
-    error: `${path}: No such file or directory`
+const readLines = function({ fileReader, existenceChecker, encoding }, path) {
+  if (existenceChecker(path))
+    return { lines: fileReader(path, encoding).split('\n') };
+  return { readError: `${path}: No such file or directory` };
+};
+
+const getFields = function({ lines, fieldNo, delimiter }) {
+  errors = {
+    fieldIsNaN: 'cut: [-cf] list: illegal list value',
+    fieldIsZero: 'cut: [-cf] list: values may not include zero'
   };
+  if (isNaN(fieldNo)) return { fieldError: errors.fieldIsNaN, fields: [] };
+  if (fieldNo === 0) return { fieldError: errors.fieldIsZero, fields: [] };
+  const fields = lines.map(line => {
+    let splittedLine = line.split(delimiter);
+    if (splittedLine.length === 1) return splittedLine[0];
+    return splittedLine[fieldNo - 1];
+  });
+  return { fields, fieldError: '' };
 };
 
-const getFieldsList = function(fields) {
-  return [+fields];
-};
-
-const getFieldContent = function(fieldSeparatedContents, field) {
-  return fieldSeparatedContents[field - 1];
-};
-
-const separateFields = function(fields, delimiter, line) {
-  const fieldSeparatedContents = line.split(delimiter);
-  if (fieldSeparatedContents.length === 1) return fieldSeparatedContents;
-  return fields.map(getFieldContent.bind(null, fieldSeparatedContents));
-};
-
-const getRequiredFields = function(fileContents, fields, delimiter) {
-  return fileContents.map(separateFields.bind(null, fields, delimiter));
-};
-
-const generateMessage = function(requiredFields, delimiter) {
-  const lines = requiredFields.map(fields => fields.join(delimiter));
-  return lines.join('\n');
+const cut = function(cmdLineArgs, fileSystem) {
+  const { path, fieldNo, delimiter } = parseUserOptions(cmdLineArgs);
+  const { lines, readError } = readLines(fileSystem, path);
+  if (readError) return { error: readError, message: '' };
+  const { fields, fieldError } = getFields({ lines, fieldNo, delimiter });
+  if (fieldError) return { error: fieldError, message: '' };
+  return { message: fields.join('\n'), error: '' };
 };
 
 module.exports = {
   parseUserOptions,
-  readFileContents,
-  getFieldsList,
-  getRequiredFields,
-  generateMessage
+  readLines,
+  getFields,
+  cut
 };

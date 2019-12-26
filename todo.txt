@@ -2,32 +2,31 @@
 
 [v0.1] node cut.js -d ',' -f 2 tmp1.txt
 
-done  -> create folders :- src , test, appTest 
-done  -> create files :- cut.js, lib.js, testLib.js 
-done  -> make connections :-
+✅ -> create folders :- src , test, appTest 
+✅ -> create files :- cut.js, lib.js, testLib.js 
+✅ -> make connections :-
         to main file and lib.js
         to test file and src file
-done  -> make sure that mocha runs
-done  -> make sure nyc runs 
-done  -> make sure npm package file is proper
-done  -> make sure git ignore should be proper
-done  -> npm test
+✅ -> make sure that mocha runs
+✅ -> make sure nyc runs 
+✅ -> make sure npm package file is proper
+✅ -> make sure git ignore should be proper
+✅ -> npm test
     
 ----->required tasks<------
 
 -> node cut.js -f 2 tmp1.txt
-done  -> parseUserOptions
-done  -> readFileContents
-done  -> getFieldsList
-done  -> getRequiredFields
-done  -> generateMessage  
-done  -> main  
+✅ -> parseUserOptions
+✅ -> readFileContents
+✅ -> getFieldsList
+✅ -> getRequiredFields 
+✅ -> main  
 
 ---->bugs<-----
 
-done  -> if any line contain only one field the whole line should be given for any field required
-done  -> error flow didn't considered
-  -> in -f field instead of number if given a character error should popup
+✅ -> if any line contain only one field the whole line should be given for any field required
+✅ -> error flow didn't considered
+✅ -> in -f field instead of number if given a character error should popup
         expected : cut: [-cf] list: illegal list value
-  -> in -f field if given zero error should popup
+✅ -> in -f field if given zero error should popup
         expected : cut: [-cf] list: values may not include zero

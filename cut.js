@@ -1,13 +1,12 @@
 const { readFileSync, existsSync } = require('fs');
-const { performCut } = require('./src/performCut');
+const { cut } = require('./src/cutLib');
 
 const main = function(cmdLineArgs) {
-  const helpers = {
+  const { message, error } = cut(cmdLineArgs, {
     fileReader: readFileSync,
     existenceChecker: existsSync,
     encoding: 'utf8'
-  };
-  const { message, error } = performCut(cmdLineArgs, helpers);
+  });
   process.stdout.write(message);
   process.stderr.write(error);
 };
