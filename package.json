@@ -15,7 +15,8 @@
     "nyc": "^14.1.1"
   },
   "scripts": {
-    "test": "nyc mocha"
+    "test": "nyc mocha",
+    "allTest": "nyc mocha && ./runAppTests.sh appTests/*.test"
   },
   "repository": {
     "type": "git",
