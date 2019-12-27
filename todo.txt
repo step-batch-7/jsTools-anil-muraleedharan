@@ -52,3 +52,10 @@
 ✅ -> To change the pseudo main testing from integrated to unit level
 ✅ -> To change parseUserOptions more flexible as order independent
 ✅ -> Sinon fake functions to be added in testing
+
+[v0.1.2] node cut.js -f 2 tmp1.txt  [default delimiter <tab>]
+
+----->Required Changes<-----
+
+❇️ -> parseUserOptions function should be changed to be working if -d is not given using tab as default
+❇️ -> appTest and unit level testing should be added for this change
