@@ -1,8 +1,9 @@
 'use strict';
 
-const { parseUserOptions, readLines, cutFields } = require('./cutLib');
+const cutModule = require('./cutLib');
 
-const cut = function(cmdLineArgs, fileSystem) {
+const cut = function(cmdLineArgs, fileSystem, cutLib = cutModule) {
+  const { parseUserOptions, readLines, cutFields } = cutLib;
   const { path, fieldNum, delimiter } = parseUserOptions(cmdLineArgs);
   const { lines, error } = readLines(fileSystem, path);
   if (error) return { error, message: '' };

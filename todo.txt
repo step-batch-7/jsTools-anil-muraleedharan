@@ -32,6 +32,7 @@
         expected : cut: [-cf] list: illegal list value
 ✅ -> in -f field if given zero error should popup
         expected : cut: [-cf] list: values may not include zero
+✅ -> if the -f given is greater than no of fields in a line the output for that line should be empty
 
 ----->changes needed<-----
 

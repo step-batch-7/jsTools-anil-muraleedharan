@@ -25,7 +25,7 @@ describe('readLines', function() {
   const existsSync = path => path === 'path';
   const encoding = 'utf8';
 
-  it('should read the lines of the file if it is exist and the file existence should be truthy', function() {
+  it('should read the lines of the file if it is exist and the error should be empty', function() {
     deepStrictEqual(
       readLines(
         {
@@ -42,7 +42,7 @@ describe('readLines', function() {
     );
   });
 
-  it('should give the the existence as a falsy value when the file does not exist', function() {
+  it('should give the corresponding error if the file does not exist', function() {
     deepStrictEqual(
       readLines(
         {
@@ -80,6 +80,20 @@ describe('cutFields', function() {
       }),
       {
         rows: ['cd', 'gh', 'ij'],
+        fieldError: ''
+      }
+    );
+  });
+
+  it('should give give empty as line if the given field number is greater than no of fields', function() {
+    deepStrictEqual(
+      cutFields({
+        lines: ['ab,cd,ef', 'ef,gh', 'ij,kl'],
+        fieldNum: 3,
+        delimiter: ','
+      }),
+      {
+        rows: ['ef', '', ''],
         fieldError: ''
       }
     );

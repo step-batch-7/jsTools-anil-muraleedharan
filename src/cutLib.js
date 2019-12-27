@@ -16,6 +16,7 @@ const readLines = function({ readFileSync, existsSync }, path) {
 const cutRequiredField = function(delimiter, fieldNum, line) {
   let splittedLine = line.split(delimiter);
   if (splittedLine.length === 1) return splittedLine[0];
+  if (fieldNum > splittedLine.length) return '';
   return splittedLine[fieldNum - 1];
 };
 
