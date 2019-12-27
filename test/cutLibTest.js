@@ -18,6 +18,16 @@ describe('parseUserOptions', function() {
     };
     deepStrictEqual(parseUserOptions(userOption), expected);
   });
+
+  it('should give an object of required user Options if -f and -d in reverse order', function() {
+    const userOption = ['-f', '2', '-d', ',', './tmp1.txt'];
+    const expected = {
+      path: './tmp1.txt',
+      fieldNum: 2,
+      delimiter: ','
+    };
+    deepStrictEqual(parseUserOptions(userOption), expected);
+  });
 });
 
 describe('readLines', function() {

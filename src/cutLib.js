@@ -1,8 +1,13 @@
 'use strict';
 
 const parseUserOptions = function(cmdLineArgs) {
-  const [, delimiter, , fieldNum, path] = cmdLineArgs;
-  return { delimiter, fieldNum: +fieldNum, path };
+  const delimiterIndex = cmdLineArgs.indexOf('-d') + 1;
+  const fieldNumIndex = cmdLineArgs.indexOf('-f') + 1;
+  const pathIndex = Math.max(delimiterIndex, fieldNumIndex) + 1;
+  const delimiter = cmdLineArgs[delimiterIndex];
+  const fieldNum = +cmdLineArgs[fieldNumIndex];
+  const path = cmdLineArgs[pathIndex];
+  return { delimiter, fieldNum, path };
 };
 
 const readLines = function({ readFileSync, existsSync }, path) {
