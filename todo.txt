@@ -51,3 +51,4 @@
 
 ✅ -> To change the pseudo main testing from integrated to unit level
 ✅ -> To change parseUserOptions more flexible as order independent
+✅ -> Sinon fake functions to be added in testing

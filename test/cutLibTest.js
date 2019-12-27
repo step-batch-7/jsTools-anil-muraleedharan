@@ -1,12 +1,8 @@
 'use strict';
 
 const { deepStrictEqual } = require('chai').assert;
-const {
-  parseUserOptions,
-  readLines,
-  cut,
-  cutFields
-} = require('../src/cutLib');
+const { fake, stub } = require('sinon');
+const { parseUserOptions, readLines, cutFields } = require('../src/cutLib');
 
 describe('parseUserOptions', function() {
   it('should give an object of required user Options', function() {
@@ -31,8 +27,11 @@ describe('parseUserOptions', function() {
 });
 
 describe('readLines', function() {
-  const readFileSync = path => 'line1\nline2\nline3';
-  const existsSync = path => path === 'path';
+  const readFileSync = fake.returns('line1\nline2\nline3');
+  const existsSync = stub();
+  existsSync.withArgs('path').returns(true);
+  existsSync.withArgs('other path').returns(false);
+
   const encoding = 'utf8';
 
   it('should read the lines of the file if it is exist and the error should be empty', function() {
