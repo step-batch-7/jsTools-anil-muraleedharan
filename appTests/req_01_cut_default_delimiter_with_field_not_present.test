@@ -1,0 +1,6 @@
+node cut.js -f 3 ./appTests/tmp2.txt
+
+mno
+pqr
+
+yz

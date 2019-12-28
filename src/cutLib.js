@@ -4,7 +4,7 @@ const parseUserOptions = function(cmdLineArgs) {
   const delimiterIndex = cmdLineArgs.indexOf('-d') + 1;
   const fieldNumIndex = cmdLineArgs.indexOf('-f') + 1;
   const pathIndex = Math.max(delimiterIndex, fieldNumIndex) + 1;
-  const delimiter = cmdLineArgs[delimiterIndex];
+  const delimiter = delimiterIndex == 0 ? '\t' : cmdLineArgs[delimiterIndex];
   const fieldNum = +cmdLineArgs[fieldNumIndex];
   const path = cmdLineArgs[pathIndex];
   return { delimiter, fieldNum, path };

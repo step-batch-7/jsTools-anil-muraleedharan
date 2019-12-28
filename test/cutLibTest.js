@@ -24,6 +24,16 @@ describe('parseUserOptions', function() {
     };
     deepStrictEqual(parseUserOptions(userOption), expected);
   });
+
+  it('should give an object of required user Options if -d is not present', function() {
+    const userOption = ['-f', '2', './tmp1.txt'];
+    const expected = {
+      path: './tmp1.txt',
+      fieldNum: 2,
+      delimiter: '\t'
+    };
+    deepStrictEqual(parseUserOptions(userOption), expected);
+  });
 });
 
 describe('readLines', function() {
