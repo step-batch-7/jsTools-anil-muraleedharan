@@ -1,4 +1,7 @@
 =======>Todo<=======
+symbols 
+  ❇️ -> Todo
+  ✅ -> Completed
 
 [v0.1] node cut.js -d ',' -f 2 tmp1.txt
 
@@ -57,5 +60,17 @@
 
 ----->Required Changes<-----
 
-❇️ -> parseUserOptions function should be changed to be working if -d is not given using tab as default
-❇️ -> appTest and unit level testing should be added for this change
+✅ -> parseUserOptions function should be changed to be working if -d is not given using tab as default
+✅ -> appTest and unit level testing should be added for this change
+
+[v0.1.3] change file reading method from async to sync
+
+----->Required Tasks<------
+
+❇️ -> callback for readFile
+
+----->Required Changes<-----
+
+❇️ -> File reading method should be changed to fs.readFile
+❇️ -> Have to add a callback function in main
+❇️ -> Giving output to user should be on callback
