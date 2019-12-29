@@ -9,4 +9,4 @@ const main = function(cmdLineArgs) {
   process.stderr.write(error);
 };
 
-main(process.argv.slice(2));
+main(process.argv.slice());

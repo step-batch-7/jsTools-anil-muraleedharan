@@ -4,74 +4,74 @@ const { deepStrictEqual } = require('chai').assert;
 const { fake, stub } = require('sinon');
 const { cut } = require('../src/executeCut');
 
-describe('cut', function() {
-  const readFileSync = fake();
-  const existsSync = fake();
-  const readLines = stub();
-  readLines.withArgs({ readFileSync, existsSync }, 'path').returns({
+const readFileSync = fake();
+const existsSync = fake();
+const readLines = stub();
+readLines.withArgs({ readFileSync, existsSync }, 'path').returns({
+  lines: 'abc,def,ghi,iii\njkl,mno,pqr\nstu,vwx,yz,zzz\nxyz',
+  error: ''
+});
+readLines.withArgs({ readFileSync, existsSync }, 'badFile.txt').returns({
+  lines: '',
+  error: 'badFile.txt: No such file or directory'
+});
+
+const parseUserOptions = stub();
+parseUserOptions.withArgs(['-d', ',', '-f', '2', 'path']).returns({
+  delimiter: ',',
+  fieldNum: 2,
+  path: 'path'
+});
+parseUserOptions.withArgs(['-d', ',', '-f', '0', 'path']).returns({
+  delimiter: ',',
+  fieldNum: 0,
+  path: 'path'
+});
+parseUserOptions.withArgs(['-d', ',', '-f', 'a', 'path']).returns({
+  delimiter: ',',
+  fieldNum: NaN,
+  path: 'path'
+});
+parseUserOptions.withArgs(['-d', ',', '-f', '2', 'badFile.txt']).returns({
+  delimiter: ',',
+  fieldNum: 2,
+  path: 'badFile.txt'
+});
+
+const cutFields = stub();
+cutFields
+  .withArgs({
     lines: 'abc,def,ghi,iii\njkl,mno,pqr\nstu,vwx,yz,zzz\nxyz',
-    error: ''
-  });
-  readLines.withArgs({ readFileSync, existsSync }, 'badFile.txt').returns({
-    lines: '',
-    error: 'badFile.txt: No such file or directory'
-  });
-
-  const parseUserOptions = stub();
-  parseUserOptions.withArgs(['-d', ',', '-f', '2', 'path']).returns({
-    delimiter: ',',
     fieldNum: 2,
-    path: 'path'
+    delimiter: ','
+  })
+  .returns({
+    rows: ['def', 'mno', 'vwx', 'xyz'],
+    fieldError: ''
   });
-  parseUserOptions.withArgs(['-d', ',', '-f', '0', 'path']).returns({
-    delimiter: ',',
+cutFields
+  .withArgs({
+    lines: 'abc,def,ghi,iii\njkl,mno,pqr\nstu,vwx,yz,zzz\nxyz',
     fieldNum: 0,
-    path: 'path'
+    delimiter: ','
+  })
+  .returns({
+    rows: [],
+    fieldError: 'cut: [-cf] list: values may not include zero'
   });
-  parseUserOptions.withArgs(['-d', ',', '-f', 'a', 'path']).returns({
-    delimiter: ',',
+cutFields
+  .withArgs({
+    lines: 'abc,def,ghi,iii\njkl,mno,pqr\nstu,vwx,yz,zzz\nxyz',
     fieldNum: NaN,
-    path: 'path'
-  });
-  parseUserOptions.withArgs(['-d', ',', '-f', '2', 'badFile.txt']).returns({
-    delimiter: ',',
-    fieldNum: 2,
-    path: 'badFile.txt'
+    delimiter: ','
+  })
+  .returns({
+    rows: [],
+    fieldError: 'cut: [-cf] list: illegal list value'
   });
 
-  const cutFields = stub();
-  cutFields
-    .withArgs({
-      lines: 'abc,def,ghi,iii\njkl,mno,pqr\nstu,vwx,yz,zzz\nxyz',
-      fieldNum: 2,
-      delimiter: ','
-    })
-    .returns({
-      rows: ['def', 'mno', 'vwx', 'xyz'],
-      fieldError: ''
-    });
-  cutFields
-    .withArgs({
-      lines: 'abc,def,ghi,iii\njkl,mno,pqr\nstu,vwx,yz,zzz\nxyz',
-      fieldNum: 0,
-      delimiter: ','
-    })
-    .returns({
-      rows: [],
-      fieldError: 'cut: [-cf] list: values may not include zero'
-    });
-  cutFields
-    .withArgs({
-      lines: 'abc,def,ghi,iii\njkl,mno,pqr\nstu,vwx,yz,zzz\nxyz',
-      fieldNum: NaN,
-      delimiter: ','
-    })
-    .returns({
-      rows: [],
-      fieldError: 'cut: [-cf] list: illegal list value'
-    });
-
-  it('should do the operation and return back a proper message if the file exist', function() {
+describe('cut', function() {
+  it('should give a proper message if the file exist', function() {
     const cutLib = { parseUserOptions, readLines, cutFields };
     const options = ['-d', ',', '-f', '2', 'path'];
     const expected = { message: 'def\nmno\nvwx\nxyz', error: '' };
@@ -101,7 +101,7 @@ describe('cut', function() {
     deepStrictEqual(actual, expected);
   });
 
-  it('should give back an error message if the file does not exist', function() {
+  it('should give an error message if the file does not exist', function() {
     const cutLib = { parseUserOptions, readLines, cutFields };
     const options = ['-d', ',', '-f', '2', 'badFile.txt'];
     const expected = {

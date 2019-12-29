@@ -15,7 +15,7 @@ describe('parseUserOptions', function() {
     deepStrictEqual(parseUserOptions(userOption), expected);
   });
 
-  it('should give an object of required user Options if -f and -d in reverse order', function() {
+  it('should work if -f and -d are in reverse order', function() {
     const userOption = ['-f', '2', '-d', ',', './tmp1.txt'];
     const expected = {
       path: './tmp1.txt',
@@ -25,7 +25,7 @@ describe('parseUserOptions', function() {
     deepStrictEqual(parseUserOptions(userOption), expected);
   });
 
-  it('should give an object of required user Options if -d is not present', function() {
+  it('should apply default if -d is not present', function() {
     const userOption = ['-f', '2', './tmp1.txt'];
     const expected = {
       path: './tmp1.txt',
@@ -44,7 +44,7 @@ describe('readLines', function() {
 
   const encoding = 'utf8';
 
-  it('should read the lines of the file if it is exist and the error should be empty', function() {
+  it('should read the lines of the file if it is exist', function() {
     deepStrictEqual(
       readLines(
         {
@@ -61,7 +61,7 @@ describe('readLines', function() {
     );
   });
 
-  it('should give the corresponding error if the file does not exist', function() {
+  it('should give the error if the file does not exist', function() {
     deepStrictEqual(
       readLines(
         {
@@ -90,7 +90,7 @@ describe('cutFields', function() {
     );
   });
 
-  it('should give the whole line if the line contains only one field', function() {
+  it('should give the whole line if it contains only one field', function() {
     deepStrictEqual(
       cutFields({
         lines: ['ab,cd', 'ef,gh', 'ij'],
@@ -104,7 +104,7 @@ describe('cutFields', function() {
     );
   });
 
-  it('should give give empty as line if the given field number is greater than no of fields', function() {
+  it('should give empty if the given field exceeds total fields', function() {
     deepStrictEqual(
       cutFields({
         lines: ['ab,cd,ef', 'ef,gh', 'ij,kl'],
