@@ -127,7 +127,7 @@ describe('cut - Unit Level', function() {
   });
 });
 
-describe('cut - Integrated Test', function() {
+describe('cut - Integration Test', function() {
   const readFileSync = fake.returns(
     'abc,def,ghi,iii\njkl,mno,pqr\nstu,vwx,yz,zzz\nxyz'
   );
