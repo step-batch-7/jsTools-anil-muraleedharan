@@ -3,11 +3,19 @@
 const cutModule = require('./cutLib');
 
 const cut = function(cmdLineArgs, fileSystem, cutLib = cutModule) {
-  const { path, fieldNum, delimiter } = cutLib.parseUserOptions(cmdLineArgs);
+  const {
+    cutOptions: { path, fieldNum, delimiter },
+    fieldError
+  } = cutLib.parseUserOptions(cmdLineArgs);
+  if (fieldError) {
+    return { error: fieldError, message: '' };
+  }
   const { lines, error } = cutLib.readLines(fileSystem, path);
-  if (error) {return { error, message: '' };}
-  const { rows, fieldError } = cutLib.cutFields({ lines, fieldNum, delimiter });
-  return { message: rows.join('\n'), error: fieldError };
+  if (error) {
+    return { error, message: '' };
+  }
+  const rows = cutLib.cutFields({ lines, fieldNum, delimiter });
+  return { message: rows.join('\n'), error: '' };
 };
 
 exports.cut = cut;

@@ -8,9 +8,12 @@ describe('parseUserOptions', function() {
   it('should give an object of required user Options', function() {
     const userOption = ['-d', ',', '-f', '2', './tmp1.txt'];
     const expected = {
-      path: './tmp1.txt',
-      fieldNum: 2,
-      delimiter: ','
+      fieldError: '',
+      cutOptions: {
+        path: './tmp1.txt',
+        fieldNum: 2,
+        delimiter: ','
+      }
     };
     deepStrictEqual(parseUserOptions(userOption), expected);
   });
@@ -18,9 +21,12 @@ describe('parseUserOptions', function() {
   it('should work if -f and -d are in reverse order', function() {
     const userOption = ['-f', '2', '-d', ',', './tmp1.txt'];
     const expected = {
-      path: './tmp1.txt',
-      fieldNum: 2,
-      delimiter: ','
+      fieldError: '',
+      cutOptions: {
+        path: './tmp1.txt',
+        fieldNum: 2,
+        delimiter: ','
+      }
     };
     deepStrictEqual(parseUserOptions(userOption), expected);
   });
@@ -28,9 +34,38 @@ describe('parseUserOptions', function() {
   it('should apply default if -d is not present', function() {
     const userOption = ['-f', '2', './tmp1.txt'];
     const expected = {
-      path: './tmp1.txt',
-      fieldNum: 2,
-      delimiter: '\t'
+      fieldError: '',
+      cutOptions: {
+        path: './tmp1.txt',
+        fieldNum: 2,
+        delimiter: '\t'
+      }
+    };
+    deepStrictEqual(parseUserOptions(userOption), expected);
+  });
+
+  it('should give a filedError if FieldNum is zero', function() {
+    const userOption = ['-f', '0', './tmp1.txt'];
+    const expected = {
+      fieldError: 'cut: [-cf] list: values may not include zero',
+      cutOptions: {
+        path: './tmp1.txt',
+        fieldNum: 0,
+        delimiter: '\t'
+      }
+    };
+    deepStrictEqual(parseUserOptions(userOption), expected);
+  });
+
+  it('should give a filedError if FieldNum not a number', function() {
+    const userOption = ['-f', 'a', './tmp1.txt'];
+    const expected = {
+      fieldError: 'cut: [-cf] list: illegal list value',
+      cutOptions: {
+        path: './tmp1.txt',
+        fieldNum: NaN,
+        delimiter: '\t'
+      }
     };
     deepStrictEqual(parseUserOptions(userOption), expected);
   });
@@ -83,10 +118,7 @@ describe('cutFields', function() {
   it('should give an array of all the  fields in each line', function() {
     deepStrictEqual(
       cutFields({ lines: ['ab,cd', 'ef,gh'], fieldNum: 1, delimiter: ',' }),
-      {
-        rows: ['ab', 'ef'],
-        fieldError: ''
-      }
+      ['ab', 'ef']
     );
   });
 
@@ -97,10 +129,7 @@ describe('cutFields', function() {
         fieldNum: 2,
         delimiter: ','
       }),
-      {
-        rows: ['cd', 'gh', 'ij'],
-        fieldError: ''
-      }
+      ['cd', 'gh', 'ij']
     );
   });
 
@@ -111,38 +140,7 @@ describe('cutFields', function() {
         fieldNum: 3,
         delimiter: ','
       }),
-      {
-        rows: ['ef', '', ''],
-        fieldError: ''
-      }
-    );
-  });
-
-  it('should give corresponding error if the given field zero', function() {
-    deepStrictEqual(
-      cutFields({
-        lines: ['ab,cd', 'ef,gh', 'ij'],
-        fieldNum: 0,
-        delimiter: ','
-      }),
-      {
-        rows: [],
-        fieldError: 'cut: [-cf] list: values may not include zero'
-      }
-    );
-  });
-
-  it('should give corresponding error if the given field is NaN', function() {
-    deepStrictEqual(
-      cutFields({
-        lines: ['ab,cd', 'ef,gh', 'ij'],
-        fieldNum: 'a',
-        delimiter: ','
-      }),
-      {
-        rows: [],
-        fieldError: 'cut: [-cf] list: illegal list value'
-      }
+      ['ef', '', '']
     );
   });
 });

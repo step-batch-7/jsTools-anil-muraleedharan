@@ -1,16 +1,38 @@
 'use strict';
 
-const parseUserOptions = function(cmdLineArgs) {
+const getDelimiter = function(userArgs) {
   const increment = 1;
   const begin = 0;
-  const delimiterIndex = cmdLineArgs.indexOf('-d') + increment;
-  const fieldNumIndex = cmdLineArgs.indexOf('-f') + increment;
+  const delimiterIndex = userArgs.indexOf('-d') + increment;
+  const delimiter = delimiterIndex === begin ? '\t' : userArgs[delimiterIndex];
+  return { delimiter, delimiterIndex };
+};
+
+const getField = function(userArgs) {
+  const increment = 1;
+  const fieldNumIndex = userArgs.indexOf('-f') + increment;
+  return { fieldNum: +userArgs[fieldNumIndex], fieldNumIndex };
+};
+
+const getPath = function({ fieldNumIndex, delimiterIndex }, userArgs) {
+  const increment = 1;
   const pathIndex = Math.max(delimiterIndex, fieldNumIndex) + increment;
-  const delimiter =
-    delimiterIndex === begin ? '\t' : cmdLineArgs[delimiterIndex];
-  const fieldNum = +cmdLineArgs[fieldNumIndex];
-  const path = cmdLineArgs[pathIndex];
-  return { delimiter, fieldNum, path };
+  return userArgs[pathIndex];
+};
+
+const parseUserOptions = function(cmdLineArgs) {
+  const begin = 0;
+  let fieldError = '';
+  const { delimiter, delimiterIndex } = getDelimiter(cmdLineArgs);
+  const { fieldNum, fieldNumIndex } = getField(cmdLineArgs);
+  const path = getPath({ fieldNumIndex, delimiterIndex }, cmdLineArgs);
+  if (isNaN(fieldNum)) {
+    fieldError = 'cut: [-cf] list: illegal list value';
+  }
+  if (fieldNum === begin) {
+    fieldError = 'cut: [-cf] list: values may not include zero';
+  }
+  return { cutOptions: { delimiter, fieldNum, path }, fieldError };
 };
 
 const readLines = function({ readFileSync, existsSync }, path) {
@@ -37,19 +59,8 @@ const cutRequiredField = function(delimiter, fieldNum, line) {
 };
 
 const cutFields = function({ lines, fieldNum, delimiter }) {
-  const begin = 0;
-  const errors = {
-    fieldIsNaN: 'cut: [-cf] list: illegal list value',
-    fieldIsZero: 'cut: [-cf] list: values may not include zero'
-  };
-  if (isNaN(fieldNum)) {
-    return { fieldError: errors.fieldIsNaN, rows: [] };
-  }
-  if (fieldNum === begin) {
-    return { fieldError: errors.fieldIsZero, rows: [] };
-  }
   const rows = lines.map(cutRequiredField.bind(null, delimiter, fieldNum));
-  return { rows, fieldError: '' };
+  return rows;
 };
 
 module.exports = {

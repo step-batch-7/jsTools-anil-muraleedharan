@@ -18,24 +18,45 @@ readLines.withArgs({ readFileSync, existsSync }, 'badFile.txt').returns({
 
 const parseUserOptions = stub();
 parseUserOptions.withArgs(['-d', ',', '-f', '2', 'path']).returns({
-  delimiter: ',',
-  fieldNum: 2,
-  path: 'path'
+  fieldError: '',
+  cutOptions: {
+    path: 'path',
+    fieldNum: 2,
+    delimiter: ','
+  }
+});
+
+parseUserOptions.withArgs(['-f', '2', '-d', ',', 'path']).returns({
+  fieldError: '',
+  cutOptions: {
+    path: 'path',
+    fieldNum: 2,
+    delimiter: ','
+  }
 });
 parseUserOptions.withArgs(['-d', ',', '-f', '0', 'path']).returns({
-  delimiter: ',',
-  fieldNum: 0,
-  path: 'path'
+  fieldError: 'cut: [-cf] list: values may not include zero',
+  cutOptions: {
+    path: 'path',
+    fieldNum: 0,
+    delimiter: '\t'
+  }
 });
 parseUserOptions.withArgs(['-d', ',', '-f', 'a', 'path']).returns({
-  delimiter: ',',
-  fieldNum: NaN,
-  path: 'path'
+  fieldError: 'cut: [-cf] list: illegal list value',
+  cutOptions: {
+    path: 'path',
+    fieldNum: NaN,
+    delimiter: '\t'
+  }
 });
 parseUserOptions.withArgs(['-d', ',', '-f', '2', 'badFile.txt']).returns({
-  delimiter: ',',
-  fieldNum: 2,
-  path: 'badFile.txt'
+  fieldError: '',
+  cutOptions: {
+    path: 'badFile.txt',
+    fieldNum: 2,
+    delimiter: ','
+  }
 });
 
 const cutFields = stub();
@@ -45,35 +66,28 @@ cutFields
     fieldNum: 2,
     delimiter: ','
   })
-  .returns({
-    rows: ['def', 'mno', 'vwx', 'xyz'],
-    fieldError: ''
-  });
-cutFields
-  .withArgs({
-    lines: 'abc,def,ghi,iii\njkl,mno,pqr\nstu,vwx,yz,zzz\nxyz',
-    fieldNum: 0,
-    delimiter: ','
-  })
-  .returns({
-    rows: [],
-    fieldError: 'cut: [-cf] list: values may not include zero'
-  });
-cutFields
-  .withArgs({
-    lines: 'abc,def,ghi,iii\njkl,mno,pqr\nstu,vwx,yz,zzz\nxyz',
-    fieldNum: NaN,
-    delimiter: ','
-  })
-  .returns({
-    rows: [],
-    fieldError: 'cut: [-cf] list: illegal list value'
-  });
+  .returns(['def', 'mno', 'vwx', 'xyz']);
 
-describe('cut', function() {
+describe('cut - Unit Level', function() {
   it('should give a proper message if the file exist', function() {
     const cutLib = { parseUserOptions, readLines, cutFields };
     const options = ['-d', ',', '-f', '2', 'path'];
+    const expected = { message: 'def\nmno\nvwx\nxyz', error: '' };
+    const actual = cut(options, { readFileSync, existsSync }, cutLib);
+    deepStrictEqual(actual, expected);
+  });
+
+  it('should give a proper message if options in reverse order', function() {
+    const cutLib = { parseUserOptions, readLines, cutFields };
+    const options = ['-f', '2', '-d', ',', 'path'];
+    const expected = { message: 'def\nmno\nvwx\nxyz', error: '' };
+    const actual = cut(options, { readFileSync, existsSync }, cutLib);
+    deepStrictEqual(actual, expected);
+  });
+
+  it('should give a proper message if options in reverse order', function() {
+    const cutLib = { parseUserOptions, readLines, cutFields };
+    const options = ['-f', '2', '-d', ',', 'path'];
     const expected = { message: 'def\nmno\nvwx\nxyz', error: '' };
     const actual = cut(options, { readFileSync, existsSync }, cutLib);
     deepStrictEqual(actual, expected);
@@ -109,6 +123,67 @@ describe('cut', function() {
       error: 'badFile.txt: No such file or directory'
     };
     const actual = cut(options, { readFileSync, existsSync }, cutLib);
+    deepStrictEqual(actual, expected);
+  });
+});
+
+describe('cut - Integrated Test', function() {
+  const readFileSync = fake.returns(
+    'abc,def,ghi,iii\njkl,mno,pqr\nstu,vwx,yz,zzz\nxyz'
+  );
+
+  const existsSync = stub();
+  existsSync.withArgs('path').returns(true);
+  existsSync.withArgs('badFile.txt').returns(false);
+
+  it('should give a proper message if the file exist', function() {
+    const options = ['-d', ',', '-f', '2', 'path'];
+    const expected = { message: 'def\nmno\nvwx\nxyz', error: '' };
+    const actual = cut(options, { readFileSync, existsSync });
+    deepStrictEqual(actual, expected);
+  });
+
+  it('should give a proper message if options in reverse order', function() {
+    const options = ['-f', '2', '-d', ',', 'path'];
+    const expected = { message: 'def\nmno\nvwx\nxyz', error: '' };
+    const actual = cut(options, { readFileSync, existsSync });
+    deepStrictEqual(actual, expected);
+  });
+
+  it('should give a proper message if options in reverse order', function() {
+    const options = ['-f', '2', '-d', ',', 'path'];
+    const expected = { message: 'def\nmno\nvwx\nxyz', error: '' };
+    const actual = cut(options, { readFileSync, existsSync });
+    deepStrictEqual(actual, expected);
+  });
+
+  it('should give an error if the given field is zero', function() {
+    const options = ['-d', ',', '-f', '0', 'path'];
+    const expected = {
+      message: '',
+      error: 'cut: [-cf] list: values may not include zero'
+    };
+    const actual = cut(options, { readFileSync, existsSync });
+    deepStrictEqual(actual, expected);
+  });
+
+  it('should give an error if the given field is NaN', function() {
+    const options = ['-d', ',', '-f', 'a', 'path'];
+    const expected = {
+      message: '',
+      error: 'cut: [-cf] list: illegal list value'
+    };
+    const actual = cut(options, { readFileSync, existsSync });
+    deepStrictEqual(actual, expected);
+  });
+
+  it('should give an error message if the file does not exist', function() {
+    const options = ['-d', ',', '-f', '2', 'badFile.txt'];
+    const expected = {
+      message: '',
+      error: 'badFile.txt: No such file or directory'
+    };
+    const actual = cut(options, { readFileSync, existsSync });
     deepStrictEqual(actual, expected);
   });
 });

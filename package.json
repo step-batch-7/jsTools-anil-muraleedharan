@@ -16,8 +16,8 @@
     "sinon": "^8.0.1"
   },
   "scripts": {
-    "test": "nyc mocha",
-    "allTest": "nyc mocha && ./runAppTests.sh appTests/*.test"
+    "test": "nyc mocha && eslint src test",
+    "allTest": "nyc mocha && ./runAppTests.sh appTests/*.test && eslint src test"
   },
   "repository": {
     "type": "git",
