@@ -1,189 +1,93 @@
 'use strict';
 
-const { deepStrictEqual } = require('chai').assert;
+const { strictEqual, ok } = require('chai').assert;
 const { fake, stub } = require('sinon');
 const { cut } = require('../src/executeCut');
 
-const readFileSync = fake();
-const existsSync = fake();
-const readLines = stub();
-readLines.withArgs({ readFileSync, existsSync }, 'path').returns({
-  lines: 'abc,def,ghi,iii\njkl,mno,pqr\nstu,vwx,yz,zzz\nxyz',
-  error: ''
-});
-readLines.withArgs({ readFileSync, existsSync }, 'badFile.txt').returns({
-  lines: '',
-  error: 'badFile.txt: No such file or directory'
+describe('cut - Integration', () => {
+  const num = { zero: 0, one: 1, two: 2 };
+  it('should cut if the given options are proper', done => {
+    const userArgs = ['-d', ',', '-f', '2', './a.txt'];
+    const readFile = fake.yields('', 'abc');
+    const onComplete = fake(() => {
+      ok(onComplete.calledWithExactly('', 'abc'));
+      strictEqual(readFile.firstCall.args[num.zero], './a.txt');
+      strictEqual(readFile.firstCall.args[num.one], 'utf8');
+      done();
+    });
+    cut({ userArgs, readFile }, onComplete);
+  });
+
+  it('should cut if the -d -f options are in reverse order', done => {
+    const userArgs = ['-f', '2', '-d', ',', './a.txt'];
+    const readFile = fake.yields('', 'abc');
+    const onComplete = fake(() => {
+      ok(onComplete.calledWithExactly('', 'abc'));
+      strictEqual(readFile.firstCall.args[num.zero], './a.txt');
+      strictEqual(readFile.firstCall.args[num.one], 'utf8');
+      done();
+    });
+    cut({ userArgs, readFile }, onComplete);
+  });
+
+  it('should give an error if the given file does not exist', done => {
+    const userArgs = ['-d', ',', '-f', '2', './b.txt'];
+    const readFile = fake.yields('./b.txt: No such file or directory', '');
+    const onComplete = fake(() => {
+      ok(
+        onComplete.calledWithExactly('./b.txt: No such file or directory', '')
+      );
+      strictEqual(readFile.firstCall.args[num.zero], './b.txt');
+      strictEqual(readFile.firstCall.args[num.one], 'utf8');
+      done();
+    });
+    cut({ userArgs, readFile }, onComplete);
+  });
+
+  it('should give an error if the given fileNum is zero', done => {
+    const userArgs = ['-d', ',', '-f', '0', './a.txt'];
+    const readFile = fake();
+    const onComplete = fake(() => {
+      ok(
+        onComplete.calledWithExactly(
+          'cut: [-cf] list: values may not include zero',
+          ''
+        )
+      );
+      ok(readFile.notCalled);
+      done();
+    });
+    cut({ userArgs, readFile }, onComplete);
+  });
+
+  it('should give an error if the given fileNum is not a number', done => {
+    const userArgs = ['-d', ',', '-f', 'a', './a.txt'];
+    const readFile = fake();
+    const onComplete = fake(() => {
+      ok(
+        onComplete.calledWithExactly('cut: [-cf] list: illegal list value', '')
+      );
+      ok(readFile.notCalled);
+      done();
+    });
+    cut({ userArgs, readFile }, onComplete);
+  });
 });
 
 const parseUserOptions = stub();
-parseUserOptions.withArgs(['-d', ',', '-f', '2', 'path']).returns({
-  fieldError: '',
-  cutOptions: {
-    path: 'path',
-    fieldNum: 2,
-    delimiter: ','
-  }
+parseUserOptions.withArgs(['-d', ',', '-f', '2', './a.txt']).returns({
+  cutOptions: { delimiter: ',', fieldNum: 2, path: './a.txt' },
+  fieldError: ''
 });
-
-parseUserOptions.withArgs(['-f', '2', '-d', ',', 'path']).returns({
-  fieldError: '',
-  cutOptions: {
-    path: 'path',
-    fieldNum: 2,
-    delimiter: ','
-  }
+parseUserOptions.withArgs(['-d', ',', '-f', '2', './b.txt']).returns({
+  cutOptions: { delimiter: ',', fieldNum: 2, path: './b.txt' },
+  fieldError: ''
 });
-parseUserOptions.withArgs(['-d', ',', '-f', '0', 'path']).returns({
-  fieldError: 'cut: [-cf] list: values may not include zero',
-  cutOptions: {
-    path: 'path',
-    fieldNum: 0,
-    delimiter: '\t'
-  }
+parseUserOptions.withArgs(['-d', ',', '-f', '0', './a.txt']).returns({
+  cutOptions: { delimiter: ',', fieldNum: 0, path: './b.txt' },
+  fieldError: 'cut: [-cf] list: values may not include zero'
 });
-parseUserOptions.withArgs(['-d', ',', '-f', 'a', 'path']).returns({
-  fieldError: 'cut: [-cf] list: illegal list value',
-  cutOptions: {
-    path: 'path',
-    fieldNum: NaN,
-    delimiter: '\t'
-  }
-});
-parseUserOptions.withArgs(['-d', ',', '-f', '2', 'badFile.txt']).returns({
-  fieldError: '',
-  cutOptions: {
-    path: 'badFile.txt',
-    fieldNum: 2,
-    delimiter: ','
-  }
-});
-
-const cutFields = stub();
-cutFields
-  .withArgs({
-    lines: 'abc,def,ghi,iii\njkl,mno,pqr\nstu,vwx,yz,zzz\nxyz',
-    fieldNum: 2,
-    delimiter: ','
-  })
-  .returns(['def', 'mno', 'vwx', 'xyz']);
-
-describe('cut - Unit Level', function() {
-  it('should give a proper message if the file exist', function() {
-    const cutLib = { parseUserOptions, readLines, cutFields };
-    const options = ['-d', ',', '-f', '2', 'path'];
-    const expected = { message: 'def\nmno\nvwx\nxyz', error: '' };
-    const actual = cut(options, { readFileSync, existsSync }, cutLib);
-    deepStrictEqual(actual, expected);
-  });
-
-  it('should give a proper message if options in reverse order', function() {
-    const cutLib = { parseUserOptions, readLines, cutFields };
-    const options = ['-f', '2', '-d', ',', 'path'];
-    const expected = { message: 'def\nmno\nvwx\nxyz', error: '' };
-    const actual = cut(options, { readFileSync, existsSync }, cutLib);
-    deepStrictEqual(actual, expected);
-  });
-
-  it('should give a proper message if options in reverse order', function() {
-    const cutLib = { parseUserOptions, readLines, cutFields };
-    const options = ['-f', '2', '-d', ',', 'path'];
-    const expected = { message: 'def\nmno\nvwx\nxyz', error: '' };
-    const actual = cut(options, { readFileSync, existsSync }, cutLib);
-    deepStrictEqual(actual, expected);
-  });
-
-  it('should give an error if the given field is zero', function() {
-    const cutLib = { parseUserOptions, readLines, cutFields };
-    const options = ['-d', ',', '-f', '0', 'path'];
-    const expected = {
-      message: '',
-      error: 'cut: [-cf] list: values may not include zero'
-    };
-    const actual = cut(options, { readFileSync, existsSync }, cutLib);
-    deepStrictEqual(actual, expected);
-  });
-
-  it('should give an error if the given field is NaN', function() {
-    const cutLib = { parseUserOptions, readLines, cutFields };
-    const options = ['-d', ',', '-f', 'a', 'path'];
-    const expected = {
-      message: '',
-      error: 'cut: [-cf] list: illegal list value'
-    };
-    const actual = cut(options, { readFileSync, existsSync }, cutLib);
-    deepStrictEqual(actual, expected);
-  });
-
-  it('should give an error message if the file does not exist', function() {
-    const cutLib = { parseUserOptions, readLines, cutFields };
-    const options = ['-d', ',', '-f', '2', 'badFile.txt'];
-    const expected = {
-      message: '',
-      error: 'badFile.txt: No such file or directory'
-    };
-    const actual = cut(options, { readFileSync, existsSync }, cutLib);
-    deepStrictEqual(actual, expected);
-  });
-});
-
-describe('cut - Integration Test', function() {
-  const readFileSync = fake.returns(
-    'abc,def,ghi,iii\njkl,mno,pqr\nstu,vwx,yz,zzz\nxyz'
-  );
-
-  const existsSync = stub();
-  existsSync.withArgs('path').returns(true);
-  existsSync.withArgs('badFile.txt').returns(false);
-
-  it('should give a proper message if the file exist', function() {
-    const options = ['-d', ',', '-f', '2', 'path'];
-    const expected = { message: 'def\nmno\nvwx\nxyz', error: '' };
-    const actual = cut(options, { readFileSync, existsSync });
-    deepStrictEqual(actual, expected);
-  });
-
-  it('should give a proper message if options in reverse order', function() {
-    const options = ['-f', '2', '-d', ',', 'path'];
-    const expected = { message: 'def\nmno\nvwx\nxyz', error: '' };
-    const actual = cut(options, { readFileSync, existsSync });
-    deepStrictEqual(actual, expected);
-  });
-
-  it('should give a proper message if options in reverse order', function() {
-    const options = ['-f', '2', '-d', ',', 'path'];
-    const expected = { message: 'def\nmno\nvwx\nxyz', error: '' };
-    const actual = cut(options, { readFileSync, existsSync });
-    deepStrictEqual(actual, expected);
-  });
-
-  it('should give an error if the given field is zero', function() {
-    const options = ['-d', ',', '-f', '0', 'path'];
-    const expected = {
-      message: '',
-      error: 'cut: [-cf] list: values may not include zero'
-    };
-    const actual = cut(options, { readFileSync, existsSync });
-    deepStrictEqual(actual, expected);
-  });
-
-  it('should give an error if the given field is NaN', function() {
-    const options = ['-d', ',', '-f', 'a', 'path'];
-    const expected = {
-      message: '',
-      error: 'cut: [-cf] list: illegal list value'
-    };
-    const actual = cut(options, { readFileSync, existsSync });
-    deepStrictEqual(actual, expected);
-  });
-
-  it('should give an error message if the file does not exist', function() {
-    const options = ['-d', ',', '-f', '2', 'badFile.txt'];
-    const expected = {
-      message: '',
-      error: 'badFile.txt: No such file or directory'
-    };
-    const actual = cut(options, { readFileSync, existsSync });
-    deepStrictEqual(actual, expected);
-  });
+parseUserOptions.withArgs(['-d', ',', '-f', 'a', './a.txt']).returns({
+  cutOptions: { delimiter: ',', fieldNum: NaN, path: './b.txt' },
+  fieldError: 'cut: [-cf] list: illegal list value'
 });

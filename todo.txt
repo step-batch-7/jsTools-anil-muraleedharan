@@ -76,6 +76,6 @@ symbols
 
 ✅ -> The field error should be given from parseUserOptions itself
 ✅ -> should add unit level and integrated level testing for pseudo main separately
-❇️ -> File reading method should be changed to fs.readFile
-❇️ -> Have to add a callback function in main
-❇️ -> Giving output to user should be on callback
+✅ -> File reading method should be changed to fs.readFile
+✅ -> Have to add a callback function in main
+✅ -> Giving output to user should be on callback

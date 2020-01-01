@@ -1,8 +1,8 @@
 'use strict';
 
-const { deepStrictEqual } = require('chai').assert;
-const { fake, stub } = require('sinon');
-const { parseUserOptions, readLines, cutFields } = require('../src/cutLib');
+const { deepStrictEqual, strictEqual, ok } = require('chai').assert;
+const { fake } = require('sinon');
+const { parseUserOptions, loadLines, cutFields } = require('../src/cutLib');
 
 describe('parseUserOptions', function() {
   it('should give an object of required user Options', function() {
@@ -71,46 +71,30 @@ describe('parseUserOptions', function() {
   });
 });
 
-describe('readLines', function() {
-  const readFileSync = fake.returns('line1\nline2\nline3');
-  const existsSync = stub();
-  existsSync.withArgs('path').returns(true);
-  existsSync.withArgs('other path').returns(false);
-
-  const encoding = 'utf8';
-
-  it('should read the lines of the file if it is exist', function() {
-    deepStrictEqual(
-      readLines(
-        {
-          readFileSync,
-          existsSync,
-          encoding
-        },
-        'path'
-      ),
-      {
-        lines: ['line1', 'line2', 'line3'],
-        error: ''
-      }
-    );
+describe('loadLines', function() {
+  const num = { zero: 0, one: 1, two: 2 };
+  it('should load all the lines if the file exist', function(done) {
+    const cutOptions = { path: './a.txt', delimiter: ',', fieldNum: 2 };
+    const readFile = fake.yields('', 'abc');
+    const onComplete = fake(() => {
+      ok(onComplete.calledWithExactly('', 'abc'));
+      strictEqual(readFile.firstCall.args[num.zero], './a.txt');
+      strictEqual(readFile.firstCall.args[num.one], 'utf8');
+      done();
+    });
+    loadLines(cutOptions, readFile, onComplete);
   });
 
-  it('should give the error if the file does not exist', function() {
-    deepStrictEqual(
-      readLines(
-        {
-          readFileSync,
-          existsSync,
-          encoding
-        },
-        'other path'
-      ),
-      {
-        lines: [],
-        error: 'other path: No such file or directory'
-      }
-    );
+  it('should give an error if the file does not exist', function(done) {
+    const cutOptions = { path: './b.txt', delimiter: ',', fieldNum: 2 };
+    const readFile = fake.yields('./b.txt: No such file or directory', '');
+    const onComplete = fake(() => {
+      strictEqual(readFile.firstCall.args[num.zero], './b.txt');
+      strictEqual(readFile.firstCall.args[num.one], 'utf8');
+      onComplete.calledWithExactly('./b.txt: No such file or directory', '');
+      done();
+    });
+    loadLines(cutOptions, readFile, onComplete);
   });
 });
 

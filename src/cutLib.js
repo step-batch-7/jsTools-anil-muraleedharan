@@ -20,12 +20,12 @@ const getPath = function({ fieldNumIndex, delimiterIndex }, userArgs) {
   return userArgs[pathIndex];
 };
 
-const parseUserOptions = function(cmdLineArgs) {
+const parseUserOptions = function(userArgs) {
   const begin = 0;
   let fieldError = '';
-  const { delimiter, delimiterIndex } = getDelimiter(cmdLineArgs);
-  const { fieldNum, fieldNumIndex } = getField(cmdLineArgs);
-  const path = getPath({ fieldNumIndex, delimiterIndex }, cmdLineArgs);
+  const { delimiter, delimiterIndex } = getDelimiter(userArgs);
+  const { fieldNum, fieldNumIndex } = getField(userArgs);
+  const path = getPath({ fieldNumIndex, delimiterIndex }, userArgs);
   if (isNaN(fieldNum)) {
     fieldError = 'cut: [-cf] list: illegal list value';
   }
@@ -35,13 +35,20 @@ const parseUserOptions = function(cmdLineArgs) {
   return { cutOptions: { delimiter, fieldNum, path }, fieldError };
 };
 
-const readLines = function({ readFileSync, existsSync }, path) {
-  const lines = [];
-  const error = '';
-  if (existsSync(path)) {
-    return { lines: readFileSync(path, 'utf8').split('\n'), error };
-  }
-  return { lines, error: `${path}: No such file or directory` };
+const loadLines = function(
+  { path, delimiter, fieldNum },
+  readFile,
+  onComplete
+) {
+  readFile(path, 'utf8', (error, contents) => {
+
+    if (error) {
+      return onComplete(`${path}: No such file or directory`, '');
+    }
+    const lines = contents.split('\n');
+    const fields = cutFields({ lines, delimiter, fieldNum });
+    onComplete('', fields.join('\n'));
+  });
 };
 
 const cutRequiredField = function(delimiter, fieldNum, line) {
@@ -59,12 +66,11 @@ const cutRequiredField = function(delimiter, fieldNum, line) {
 };
 
 const cutFields = function({ lines, fieldNum, delimiter }) {
-  const rows = lines.map(cutRequiredField.bind(null, delimiter, fieldNum));
-  return rows;
+  return lines.map(cutRequiredField.bind(null, delimiter, fieldNum));
 };
 
 module.exports = {
   parseUserOptions,
-  readLines,
+  loadLines,
   cutFields
 };

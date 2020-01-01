@@ -1,21 +1,13 @@
 'use strict';
 
-const cutModule = require('./cutLib');
+const { parseUserOptions, loadLines } = require('./cutLib');
 
-const cut = function(cmdLineArgs, fileSystem, cutLib = cutModule) {
-  const {
-    cutOptions: { path, fieldNum, delimiter },
-    fieldError
-  } = cutLib.parseUserOptions(cmdLineArgs);
+const cut = function({ userArgs, readFile }, onComplete) {
+  const { cutOptions, fieldError } = parseUserOptions(userArgs);
   if (fieldError) {
-    return { error: fieldError, message: '' };
+    return onComplete(fieldError, '');
   }
-  const { lines, error } = cutLib.readLines(fileSystem, path);
-  if (error) {
-    return { error, message: '' };
-  }
-  const rows = cutLib.cutFields({ lines, fieldNum, delimiter });
-  return { message: rows.join('\n'), error: '' };
+  loadLines(cutOptions, readFile, onComplete);
 };
 
 exports.cut = cut;
