@@ -41,9 +41,9 @@ const loadLines = function(
   onComplete
 ) {
   readFile(path, 'utf8', (error, contents) => {
-
     if (error) {
-      return onComplete(`${path}: No such file or directory`, '');
+      onComplete(`${path}: No such file or directory`, '');
+      return;
     }
     const lines = contents.split('\n');
     const fields = cutFields({ lines, delimiter, fieldNum });

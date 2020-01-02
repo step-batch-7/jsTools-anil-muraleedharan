@@ -1,13 +1,15 @@
 'use strict';
 
-const { parseUserOptions, loadLines } = require('./cutLib');
+const cutModule = require('./cutLib');
 
-const cut = function({ userArgs, readFile }, onComplete) {
-  const { cutOptions, fieldError } = parseUserOptions(userArgs);
+const cut = function({ userArgs, readFile }, onComplete, cutLib = cutModule) {
+  const { cutOptions, fieldError } = cutLib.parseUserOptions(userArgs);
   if (fieldError) {
-    return onComplete(fieldError, '');
+    onComplete(fieldError, '');
+    return;
   }
-  loadLines(cutOptions, readFile, onComplete);
+  cutLib.loadLines(cutOptions, readFile, onComplete);
 };
 
 exports.cut = cut;
+//
