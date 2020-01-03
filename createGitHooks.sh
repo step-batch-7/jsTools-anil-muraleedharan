@@ -20,7 +20,7 @@ cat mochaOutput.txt | grep '^not' > mochaError.txt
 if [ $? == 0 ]; then
     tput bold
     echo "${red}❌ Fix the unit test${reset} ❌${red}"
-    cat -n mochaError.txt
+    cat mochaError.txt  | cut -d "' '" -f 4-
     rm mochaOutput.txt mochaError.txt
     exit 1
 fi
