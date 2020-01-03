@@ -8,27 +8,28 @@ reset=`tput sgr0`
 cat appTestOut.txt | grep '❌' > appTestError.txt
 if [ $? == 0 ]; then 
     tput bold
-    echo "${red}❌ Fix the AppTests${reset} ❌"
+    echo "${red}❌ Fix the AppTests${reset} ❌${red}"
     cat appTestError.txt
     rm appTestOut.txt appTestError.txt
     exit 1
 fi
 rm appTestOut.txt appTestError.txt
 
-nyc mocha > mochaOutput.txt
-if [ $? != 0 ]; then
+mocha -R tap > mochaOutput.txt
+cat mochaOutput.txt | grep '^not' > mochaError.txt
+if [ $? == 0 ]; then
     tput bold
-    echo "${red}❌ Fix the unit test${reset} ❌"
-    cat mochaOutput.txt
-    rm mochaOutput.txt
+    echo "${red}❌ Fix the unit test${reset} ❌${red}"
+    cat -n mochaError.txt
+    rm mochaOutput.txt mochaError.txt
     exit 1
 fi
-rm mochaOutput.txt
+rm mochaOutput.txt mochaError.txt
 
 eslint src test > eslintError.txt
 if [ $? != 0 ]; then 
     tput bold
-    echo "${red}❌ Follow ESLint standards${reset} ❌"
+    echo "${red}❌ Follow ESLint standards${reset} ❌${red}"
     cat eslintError.txt
     rm eslintError.txt
     exit 1
@@ -38,7 +39,7 @@ rm eslintError.txt
 grep -rn "//" ./src/*.js ./test/*.js ./*.js > CommendedLines.txt
 if [ $? == 0 ]; then
     tput bold   
-    echo "${red} ❌ Remove the unnecessary lines${reset} ❌"
+    echo "${red} ❌ Remove the unnecessary lines${reset} ❌${red}"
     count=$(cat CommendedLines.txt | wc -l)
     echo "Total Lines Commended : " $count  
     cat -n CommendedLines.txt
